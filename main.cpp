@@ -6,18 +6,28 @@
 #include "TileMap.h"
 #include "DiamondView.h"
 #include "RGBAColor.h"
+#include <vector>
 
 using namespace std;
 
 const int TILE_WIDTH = 64;
 const int TILE_HEIGHT = TILE_WIDTH / 2;
-const int TILE_ROWS = 4;
-const int TILE_COLS = 4;
+const int TILE_ROWS = 17;
+const int TILE_COLS = 16;
 
 TileMap tm(TILE_ROWS, TILE_COLS);
 DiamondView dv(tm, TILE_WIDTH, TILE_HEIGHT);
 RGBAColor tileColorEven(255, 0, 0);
 RGBAColor tileColorOdd(200, 0, 0);
+RGBAColor tileColorSelected(255, 255, 0);
+vector<RGBAColor> colorSet = {tileColorEven, tileColorOdd, tileColorSelected};
+
+struct Cursor {
+    int x = 0,
+        y = 0;
+};
+
+Cursor cursor;
 
 void drawDiamond(GLfloat x, GLfloat y, GLfloat width) {
     float height = width / 2;
@@ -41,35 +51,77 @@ void init() {
 
 void render(void) {
     RGBAColor color;
+    TilePosition tp;
 
     for (int x = 0; x < TILE_ROWS; x++) {
         for (int y = 0; y < TILE_COLS; y++) {
-            if (tm.getTileId(x, y) == 0) {
-                color = tileColorEven;
-            } else {
-                color = tileColorOdd;
-            }
+            color = colorSet.at(tm.getTileId(x, y));
 
             glBegin(GL_POLYGON);
             glColor3ub(color.getR(), color.getG(), color.getB());
-            dv.calcTilePosition(x, y);
-            drawDiamond(dv.getX(), dv.getY(), TILE_WIDTH);
+            tp = dv.calcTilePosition(x, y);
+            drawDiamond(tp.x, tp.y, TILE_WIDTH);
             glEnd();
         }
     }
 
+    color = colorSet.at(2);
+
+    glBegin(GL_POLYGON);
+    glColor3ub(color.getR(), color.getG(), color.getB());
+    tp = dv.calcTilePosition(cursor.x, cursor.y);
+    drawDiamond(tp.x, tp.y, TILE_WIDTH);
+    glEnd();
 
     glColor3f(0, 0, 0);
     for (int x = 0; x < TILE_ROWS; x++) {
         for (int y = 0; y < TILE_COLS; y++) {
             glBegin(GL_LINE_LOOP);
-            dv.calcTilePosition(x, y);
-            drawDiamond(dv.getX(), dv.getY(), TILE_WIDTH);
+            tp = dv.calcTilePosition(x, y);
+            drawDiamond(tp.x, tp.y, TILE_WIDTH);
             glEnd();
         }
     }
 
     glFlush();
+}
+
+void handleKeyboard(unsigned char key, int x, int y) {
+    dv.calcTilePosition(cursor.x, cursor.y);
+
+    switch (key) {
+        case 'w':
+            dv.tileWalking(NORTH);
+            break;
+        case 'a':
+            dv.tileWalking(WEST);
+            break;
+        case 's':
+            dv.tileWalking(SOUTH);
+            break;
+        case 'd':
+            dv.tileWalking(EAST);
+            break;
+        case 'q':
+            dv.tileWalking(NORTHWEST);
+            break;
+        case 'e':
+            dv.tileWalking(NORTHEAST);
+            break;
+        case 'z':
+            dv.tileWalking(SOUTHWEST);
+            break;
+        case 'c':
+            dv.tileWalking(SOUTHEAST);
+            break;
+        default:
+            break;
+    }
+
+    cursor.x = dv.getX();
+    cursor.y = dv.getY();
+
+    glutPostRedisplay();
 }
 
 int main(int argc, char* argv[])
@@ -100,6 +152,7 @@ int main(int argc, char* argv[])
 
     init();
 
+    glutKeyboardFunc(handleKeyboard);
 	glutDisplayFunc(render);
 
     glutMainLoop();

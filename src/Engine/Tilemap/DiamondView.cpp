@@ -2,18 +2,47 @@
 
 DiamondView::DiamondView(TileMap tm, int w, int h) :
     TileMapView(tm, w, h)
-{
-    //ctor
-}
+{}
 
 DiamondView::~DiamondView()
 {
     //dtor
 }
 
-void DiamondView::tileWalking()
+void DiamondView::tileWalking(TileOrientation orientation)
 {
-    return;
+    switch (orientation) {
+        case NORTH:
+            x--;
+            y++;
+            break;
+        case NORTHEAST:
+            y++;
+            break;
+        case EAST:
+            x++;
+            y++;
+            break;
+        case SOUTHEAST:
+            x++;
+            break;
+        case SOUTH:
+            x++;
+            y--;
+            break;
+        case SOUTHWEST:
+            y--;
+            break;
+        case WEST:
+            x--;
+            y--;
+            break;
+        case NORTHWEST:
+            x--;
+            break;
+        default:
+            break;
+    }
 }
 
 void DiamondView::mouseMap()
@@ -21,10 +50,15 @@ void DiamondView::mouseMap()
     return;
 }
 
-void DiamondView::calcTilePosition(int x, int y)
+TilePosition DiamondView::calcTilePosition(int x, int y)
 {
-//    this->x = x * width + y * (width/2);
-//    this->y = y * (height/2);
-    this->x = (x * width/2) + (y * width/2);
-    this->y = (y * height/2) - (x * height/2);
+    this->x = x;
+    this->y = y;
+
+    TilePosition tp;
+
+    tp.x = (x * width/2) + (y * width/2);
+    tp.y = (y * height/2) - (x * height/2);
+
+    return tp;
 }

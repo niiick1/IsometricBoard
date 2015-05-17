@@ -16,11 +16,10 @@ int TileMap::getTileId(int x, int y)
 
 void TileMap::loadTilemap()
 {
-    map = {
-        {0, 1, 0, 1},
-        {1, 0, 1, 0},
-        {0, 1, 0, 1},
-        {1, 0, 1, 0}
-    };
+    for (int x = 0; x < rows; x++) {
+        for (int y = 0; y < cols; y++) {
+            map[x][y] = (x+y) % 2;
+        }
+    }
 }
 

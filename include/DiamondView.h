@@ -9,9 +9,9 @@ class DiamondView : public TileMapView
         DiamondView(TileMap tm, int w, int h);
         virtual ~DiamondView();
 
-        void tileWalking();
+        void tileWalking(TileOrientation);
         void mouseMap();
-        void calcTilePosition(int x, int y);
+        TilePosition calcTilePosition(int x, int y);
 
     protected:
     private:
