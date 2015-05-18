@@ -11,6 +11,8 @@ class TileMap
         virtual ~TileMap();
 
         int getTileId(int x, int y);
+        const int& getRows() const { return rows; }
+        const int& getCols() const { return cols; }
 
         void loadTilemap();
     protected:

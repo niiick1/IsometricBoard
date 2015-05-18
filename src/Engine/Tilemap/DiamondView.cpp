@@ -11,6 +11,9 @@ DiamondView::~DiamondView()
 
 void DiamondView::tileWalking(TileOrientation orientation)
 {
+    int savedX = x,
+        savedY = y;
+
     switch (orientation) {
         case NORTH:
             x--;
@@ -42,6 +45,14 @@ void DiamondView::tileWalking(TileOrientation orientation)
             break;
         default:
             break;
+    }
+
+    if (x >= getTilemapRows() || x < 0) {
+        x = savedX;
+    }
+
+    if (y >= getTilemapCols() || y < 0) {
+        y = savedY;
     }
 }
 

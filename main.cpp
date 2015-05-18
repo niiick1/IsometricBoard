@@ -19,8 +19,9 @@ TileMap tm(TILE_ROWS, TILE_COLS);
 DiamondView dv(tm, TILE_WIDTH, TILE_HEIGHT);
 RGBAColor tileColorEven(255, 0, 0);
 RGBAColor tileColorOdd(200, 0, 0);
-RGBAColor tileColorSelected(255, 255, 0);
-vector<RGBAColor> colorSet = {tileColorEven, tileColorOdd, tileColorSelected};
+RGBAColor tileColorSelected(76, 241, 31);
+RGBAColor tileBorderColor(127, 0, 0);
+vector<RGBAColor> colorSet = {tileColorEven, tileColorOdd};
 
 struct Cursor {
     int x = 0,
@@ -65,7 +66,7 @@ void render(void) {
         }
     }
 
-    color = colorSet.at(2);
+    color = tileColorSelected;
 
     glBegin(GL_POLYGON);
     glColor3ub(color.getR(), color.getG(), color.getB());
@@ -73,7 +74,8 @@ void render(void) {
     drawDiamond(tp.x, tp.y, TILE_WIDTH);
     glEnd();
 
-    glColor3f(0, 0, 0);
+    color = tileBorderColor;
+    glColor3ub(color.getR(), color.getG(), color.getB());
     for (int x = 0; x < TILE_ROWS; x++) {
         for (int y = 0; y < TILE_COLS; y++) {
             glBegin(GL_LINE_LOOP);

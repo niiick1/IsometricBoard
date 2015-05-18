@@ -22,8 +22,10 @@ class TileMapView
 
         void setTileset(Tileset ts) { tileset = ts; }
 
-        const int& getX() { return x; }
-        const int& getY() { return y; }
+        const int& getX() const { return x; }
+        const int& getY() const { return y; }
+        const int& getTilemapRows() { return tilemap.getRows(); }
+        const int& getTilemapCols() { return tilemap.getCols(); }
 
     protected:
         int width,
