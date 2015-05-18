@@ -40,6 +40,18 @@ void drawDiamond(GLfloat x, GLfloat y, GLfloat width) {
 }
 
 void init() {
+    glClearColor(1, 1, 1, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-400, 400, -300, 300);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(-400, 0, 0);
+    glScalef(0.75, 0.75, 1);
+
     tm.loadTilemap();
     Tileset set;
     set.addTileFromFile("resources/tiles/0.ptm");
@@ -137,20 +149,6 @@ int main(int argc, char* argv[])
 
     glutInitWindowPosition(windowX, windowY);
     glutCreateWindow("Teste");
-
-    glClearColor(1, 1, 1, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glViewport(400, 300, 400, 300);
-
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(-400, 400, -300, 300);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(-400, 0, 0);
-    glScalef(0.75, 0.75, 1);
 
     init();
 
