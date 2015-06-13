@@ -45,7 +45,7 @@ Image* PTMReader::readFile(string file)
             if (height.empty()) {
                 height = buffer;
             } else {
-                // Ingnoring max value
+                // Ignoring max value
                 break;
             }
         }
