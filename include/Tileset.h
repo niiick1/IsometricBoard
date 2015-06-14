@@ -12,7 +12,7 @@ class Tileset
         virtual ~Tileset();
 
         void addTileFromFile(std::string file);
-        Tile getTileById(int id);
+        const Tile& getTileById(int id) const;
     protected:
     private:
         std::vector<Tile> tileset;

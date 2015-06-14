@@ -14,7 +14,7 @@ void Tileset::addTileFromFile(std::string file)
     tileset.push_back(t);
 }
 
-Tile Tileset::getTileById(int id)
+const Tile& Tileset::getTileById(int id) const
 {
     return tileset.at(id);
 }
