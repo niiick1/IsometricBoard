@@ -2,21 +2,19 @@
 #define TILE_H
 
 #include <string>
-#include "Image.h"
 
 class Tile
 {
     public:
         Tile();
-        Tile(int id);
-        Tile(const Tile& tile);
+        Tile(int id, unsigned texId);
         virtual ~Tile();
 
-        void loadPTMImageFromFile(std::string file);
+        unsigned getTextureId() { return texId; }
     protected:
     private:
         int id;
-        Image* img;
+        unsigned texId;
 };
 
 #endif // TILE_H
