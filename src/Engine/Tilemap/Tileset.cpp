@@ -1,7 +1,6 @@
 #include <gl/GL.h>
 #include "Tileset.h"
 #include "PTMReader.h"
-#include <iostream>
 
 Tileset::Tileset()
 {}
@@ -18,8 +17,6 @@ void Tileset::addTileFromFile(std::string file)
 
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
-
-    std::cout << "Created texture " << textureID << std::endl;
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Linear Filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Linear Filtering
