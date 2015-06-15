@@ -128,6 +128,13 @@ void init() {
     set.addTileFromFile("resources/tiles/assassin.ptm");
 
     m.loadTextureFromFile("resources/tiles/char1.ptm");
+
+    TilePosition pos;
+    pos.x = cursor.x;
+    pos.y = cursor.y;
+    m.setCurrentPosition(pos);
+
+    pos = m.getCurrentPosition();
 }
 
 void render(void) {
@@ -193,7 +200,20 @@ void render(void) {
 //    glBegin(GL_QUADS);
     int cwidth = 44;
     float offX = (TILE_WIDTH - cwidth)/2;
-    m.render(tp.x + offX, tp.y + offX/2);
+    float currentTime = m.getTime();
+    TilePosition pos;
+
+    if (currentTime != 0) {
+        pos = m.getOldPosition();
+        m.setTime(currentTime + 0.2f);
+    } else {
+        pos = m.getCurrentPosition();
+
+    }
+
+    pos = dv.calcTilePosition(pos.x, pos.y);
+//    cout << "pos: " << pos.x << ", " << pos.y << endl;
+    m.render(pos.x + offX, pos.y + offX/2);
 //    glEnd();
 
     glBindTexture(GL_TEXTURE_2D, tile1.getTextureId());
@@ -222,22 +242,22 @@ void handleKeyboard(unsigned char key, int x, int y) {
         case 'w':
         case 'W':
             dv.tileWalking(NORTH);
-            glTranslatef(0, -1* TILE_HEIGHT, 0);
+//            glTranslatef(0, -1* TILE_HEIGHT, 0);
             break;
         case 'a':
         case 'A':
             dv.tileWalking(WEST);
-            glTranslatef(TILE_WIDTH, 0, 0);
+//            glTranslatef(TILE_WIDTH, 0, 0);
             break;
         case 's':
         case 'S':
             dv.tileWalking(SOUTH);
-            glTranslatef(0, TILE_HEIGHT, 0);
+//            glTranslatef(0, TILE_HEIGHT, 0);
             break;
         case 'd':
         case 'D':
             dv.tileWalking(EAST);
-            glTranslatef(-1 * TILE_WIDTH, 0, 0);
+//            glTranslatef(-1 * TILE_WIDTH, 0, 0);
             break;
         case 'q':
         case 'Q':
@@ -258,6 +278,13 @@ void handleKeyboard(unsigned char key, int x, int y) {
         default:
             break;
     }
+
+    TilePosition pos;
+    pos.x = dv.getX();
+    pos.y = dv.getY();
+
+    m.setCurrentPosition(pos);
+    m.setTime(0.001f);
 
     cursor.x = dv.getX();
     cursor.y = dv.getY();

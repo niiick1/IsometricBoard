@@ -5,28 +5,6 @@
 
 Model::Model()
 {
-    texCoord[0] = new float[8] {
-            0.0f, 1.0f,
-            0.0f, 0.0f,
-            0.33f, 0.0f,
-            0.33f, 1.0f
-        };
-
-    texCoord[1] = new float[8]
-        {
-            0.33f, 1.0f,
-            0.33f, 0.0f,
-            0.66f, 0.0f,
-            0.66f, 1.0f
-        };
-
-    texCoord[2] = new float[8]
-        {
-            0.66f, 1.0f,
-            0.66f, 0.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f
-        };
 }
 
 Model::~Model()
@@ -61,6 +39,13 @@ void Model::update()
     if (++currentFrame >= frames) {
         currentFrame = 0;
     }
+
+    walkY = time * 32;
+
+    if (time >= 1) {
+        time = 0;
+        walkY = 0;
+    }
 }
 
 void Model::render(int x, int y)
@@ -69,6 +54,8 @@ void Model::render(int x, int y)
 
     float initX = currentFrame * (1.0f/9.0f),
         endX = (currentFrame + 1) * (1.0f/9.0f);
+
+    y-= walkY;
 
     glTexCoord2f(0 + initX, 0);
     glVertex2f(x, y);
@@ -84,3 +71,11 @@ void Model::render(int x, int y)
 
     glEnd();
 }
+
+void Model::setCurrentPosition(const TilePosition& tp)
+{
+    oldPosition = currentPosition;
+    currentPosition = tp;
+}
+
+
