@@ -8,6 +8,7 @@
 #include "RGBAColor.h"
 #include <vector>
 #include "PTMReader.h"
+#include "Model.h"
 #include <iostream>
 
 using namespace std;
@@ -36,6 +37,7 @@ struct Cursor {
 Cursor cursor;
 PTMReader ptm;
 Tileset set;
+Model m;
 
 void drawDiamond(GLfloat x, GLfloat y, GLfloat width) {
     GLfloat height = width / 2;
@@ -117,14 +119,15 @@ void init() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(-400, 0, 0);
-//    glScalef(1, 1, 1);
 
     tm.loadTilemap();
 
     set.addTileFromFile("resources/tiles/grass.ptm");
     set.addTileFromFile("resources/tiles/ground.ptm");
-    set.addTileFromFile("resources/tiles/poring11.ptm");
-    set.addTileFromFile("resources/tiles/assassin1.ptm");
+    set.addTileFromFile("resources/tiles/poring.ptm");
+    set.addTileFromFile("resources/tiles/assassin.ptm");
+
+    m.loadTextureFromFile("resources/tiles/char1.ptm");
 }
 
 void render(void) {
@@ -179,12 +182,19 @@ void render(void) {
     drawPoring(tpPoring.x, tpPoring.y);
     glEnd();
 
-    Tile tile = set.getTileById(3);
-    glBindTexture(GL_TEXTURE_2D, tile.getTextureId());
+//    Tile tile = set.getTileById(3);
+//    glBindTexture(GL_TEXTURE_2D, tile.getTextureId());
+//
+//    glBegin(GL_QUADS);
+//    drawCharacter(tp.x, tp.y);
+//    glEnd();
 
-    glBegin(GL_QUADS);
-    drawCharacter(tp.x, tp.y);
-    glEnd();
+    glBindTexture(GL_TEXTURE_2D, m.getTextureId());
+//    glBegin(GL_QUADS);
+    int cwidth = 44;
+    float offX = (TILE_WIDTH - cwidth)/2;
+    m.render(tp.x + offX, tp.y + offX/2);
+//    glEnd();
 
     glBindTexture(GL_TEXTURE_2D, tile1.getTextureId());
 
@@ -255,6 +265,12 @@ void handleKeyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
+void animate(int t) {
+    m.update();
+    glutPostRedisplay();
+    glutTimerFunc(30, animate, 0);
+}
+
 int main(int argc, char* argv[])
 {
     glutInit(&argc, argv);
@@ -272,6 +288,7 @@ int main(int argc, char* argv[])
     glutKeyboardFunc(handleKeyboard);
 	glutDisplayFunc(render);
 
+    glutTimerFunc(33, animate, 0);
     glutMainLoop();
 
     return 0;
