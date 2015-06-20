@@ -2,6 +2,7 @@
 #include <gl/GL.h>
 #include "Tileset.h"
 #include "PTMReader.h"
+#include <iostream>
 
 Model::Model()
 {
@@ -36,9 +37,11 @@ void Model::loadTextureFromFile(std::string file)
 
 void Model::update()
 {
-    if (++currentFrame >= frames) {
-        currentFrame = 0;
-    }
+    currentFrame = 9 * time;
+//    std::cout << time << " and " << currentFrame << std::endl;
+//    if (++currentFrame >= frames) {
+//        currentFrame = 0;
+//    }
 
     walkY = time * 32;
 

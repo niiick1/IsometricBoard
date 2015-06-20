@@ -55,6 +55,42 @@ void drawDiamond(GLfloat x, GLfloat y, GLfloat width) {
     glVertex2f(height + x, y);
 }
 
+void drawBlock(GLfloat x, GLfloat y, GLfloat width, GLfloat height) {
+    glTexCoord2f(0, 0);
+    glVertex2f(x, y);
+
+    glTexCoord2f(0, 1);
+    glVertex2f(x, y + height);
+
+    glTexCoord2f(1, 1);
+    glVertex2f(x + width, y + height);
+
+    glTexCoord2f(1, 0);
+    glVertex2f(x + width, y);
+}
+
+void drawTile(GLfloat x, GLfloat y, GLfloat width, GLint volume) {
+    float height = width / 2;
+
+    glBegin(GL_QUADS);
+    drawDiamond(x, y, width);
+    glEnd();
+
+    glBegin(GL_QUADS);
+        glVertex2f(x, height / 2 - y);
+        glVertex2f(width / 2 + x, height - y);
+        glVertex2f(width / 2 + x, height - y - volume);
+        glVertex2f(x, height / 2 - y - volume);
+    glEnd();
+
+    glBegin(GL_QUADS);
+        glVertex2f(width / 2 + x, height - y);
+        glVertex2f(width + x, height / 2 - y);
+        glVertex2f(width + x, height / 2 - y - volume);
+        glVertex2f(width / 2 + x, height - y - volume);
+    glEnd();
+}
+
 void drawCharacter(GLfloat x, GLfloat y) {
     int width = 45,
         height = 95;
@@ -65,8 +101,6 @@ void drawCharacter(GLfloat x, GLfloat y) {
     if (tempX > 0) x += tempX;
 
     y += tempX/2;
-
-    cout << x << ", " << y << endl;
 
     glTexCoord2f(0, 0);
     glVertex2f(x, y);
@@ -122,8 +156,11 @@ void init() {
 
     tm.loadTilemap();
 
-    set.addTileFromFile("resources/tiles/grass.ptm");
-    set.addTileFromFile("resources/tiles/ground.ptm");
+//    set.addTileFromFile("resources/tiles/bricks.ptm");
+    set.addTileFromFile("resources/tiles/stonebricksmooth.ptm");
+//    set.addTileFromFile("resources/tiles/grass.ptm");
+    set.addTileFromFile("resources/tiles/brickwall.ptm");
+//    set.addTileFromFile("resources/tiles/ground.ptm");
     set.addTileFromFile("resources/tiles/poring.ptm");
     set.addTileFromFile("resources/tiles/assassin.ptm");
 
@@ -148,56 +185,25 @@ void render(void) {
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
     for (int x = 0; x < TILE_ROWS; x++) {
-        for (int y = 0; y < TILE_COLS; y++) {
+        for (int y = TILE_COLS - 1; y >= 0; y--) {
             Tile tile = set.getTileById(tm.getTileId(x, y));
 
             glBindTexture(GL_TEXTURE_2D, tile.getTextureId());
 
             glBegin(GL_QUADS);
             tp = dv.calcTilePosition(x, y);
-            drawDiamond(tp.x, tp.y, TILE_WIDTH);
+            if (tile.getTextureId() == 2) {
+                drawBlock(tp.x, tp.y, 64, 64);
+            } else {
+                drawDiamond(tp.x, tp.y, TILE_WIDTH);
+            }
             glEnd();
         }
     }
 
-    glDisable(GL_TEXTURE_2D);
-
-//    color = tileColorSelected;
-//
-//    glBegin(GL_POLYGON);
-//    glColor3ub(color.getR(), color.getG(), color.getB());
     tp = dv.calcTilePosition(cursor.x, cursor.y);
-//    drawDiamond(tp.x, tp.y, TILE_WIDTH);
-//    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
-
-    Tile tile1 = set.getTileById(2);
-    glBindTexture(GL_TEXTURE_2D, tile1.getTextureId());
-
-    glBegin(GL_QUADS);
-    dv.calcTilePosition(cursor.x, cursor.y);
-    dv.tileWalking(NORTHWEST);
-    TilePosition tpPoring = dv.calcTilePosition(dv.getX(), dv.getY());
-    drawPoring(tpPoring.x, tpPoring.y);
-    glEnd();
-
-    glBegin(GL_QUADS);
-    dv.calcTilePosition(cursor.x, cursor.y);
-    dv.tileWalking(NORTHEAST);
-    tpPoring = dv.calcTilePosition(dv.getX(), dv.getY());
-    drawPoring(tpPoring.x, tpPoring.y);
-    glEnd();
-
-//    Tile tile = set.getTileById(3);
-//    glBindTexture(GL_TEXTURE_2D, tile.getTextureId());
-//
-//    glBegin(GL_QUADS);
-//    drawCharacter(tp.x, tp.y);
-//    glEnd();
 
     glBindTexture(GL_TEXTURE_2D, m.getTextureId());
-//    glBegin(GL_QUADS);
     int cwidth = 44;
     float offX = (TILE_WIDTH - cwidth)/2;
     float currentTime = m.getTime();
@@ -205,37 +211,24 @@ void render(void) {
 
     if (currentTime != 0) {
         pos = m.getOldPosition();
-        m.setTime(currentTime + 0.2f);
+        m.setTime(currentTime +  0.2f);
     } else {
         pos = m.getCurrentPosition();
 
     }
 
     pos = dv.calcTilePosition(pos.x, pos.y);
-//    cout << "pos: " << pos.x << ", " << pos.y << endl;
     m.render(pos.x + offX, pos.y + offX/2);
-//    glEnd();
 
-    glBindTexture(GL_TEXTURE_2D, tile1.getTextureId());
-
-    glBegin(GL_QUADS);
-    dv.calcTilePosition(cursor.x, cursor.y);
-    dv.tileWalking(SOUTHWEST);
-    tpPoring = dv.calcTilePosition(dv.getX(), dv.getY());
-    drawPoring(tpPoring.x, tpPoring.y);
-    glEnd();
-
-    glBegin(GL_QUADS);
-    dv.calcTilePosition(cursor.x, cursor.y);
-    dv.tileWalking(SOUTHEAST);
-    tpPoring = dv.calcTilePosition(dv.getX(), dv.getY());
-    drawPoring(tpPoring.x, tpPoring.y);
-    glEnd();
-
+    glDisable(GL_TEXTURE_2D);
     glFlush();
 }
 
 void handleKeyboard(unsigned char key, int x, int y) {
+    if (m.getTime() != 0) {
+        return;
+    }
+
     dv.calcTilePosition(cursor.x, cursor.y);
 
     switch (key) {
@@ -288,14 +281,12 @@ void handleKeyboard(unsigned char key, int x, int y) {
 
     cursor.x = dv.getX();
     cursor.y = dv.getY();
-
-    glutPostRedisplay();
 }
 
 void animate(int t) {
     m.update();
-    glutPostRedisplay();
     glutTimerFunc(30, animate, 0);
+    glutPostRedisplay();
 }
 
 int main(int argc, char* argv[])
