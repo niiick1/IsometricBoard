@@ -43,10 +43,12 @@ void Model::update()
 //        currentFrame = 0;
 //    }
 
-    walkY = time * 32;
+    walkX = time * walkXFactor;
+    walkY = time * walkYFactor;
 
     if (time >= 1) {
         time = 0;
+        walkX = 0;
         walkY = 0;
     }
 }
@@ -58,7 +60,10 @@ void Model::render(int x, int y)
     float initX = currentFrame * (1.0f/9.0f),
         endX = (currentFrame + 1) * (1.0f/9.0f);
 
-    y-= walkY;
+//    std::cout << "init: " << initX << " end: " << endX << std::endl;;
+
+    y += walkY;
+    x += walkX;
 
     glTexCoord2f(0 + initX, 0);
     glVertex2f(x, y);
@@ -73,6 +78,49 @@ void Model::render(int x, int y)
     glVertex2f(x + width, y);
 
     glEnd();
+}
+
+void Model::walk(TileOrientation direction)
+{
+    int TILE_HEIGHT = 32,
+        TILE_WIDTH = 64;
+
+    switch (direction) {
+        case NORTH:
+            walkXFactor = 0;
+            walkYFactor = TILE_HEIGHT;
+            break;
+        case NORTHEAST:
+            walkXFactor = TILE_WIDTH/2;
+            walkYFactor = TILE_HEIGHT/2;
+            break;
+        case EAST:
+            walkXFactor = TILE_WIDTH;
+            walkYFactor = 0;
+            break;
+        case SOUTHEAST:
+            walkXFactor = TILE_WIDTH/2;
+            walkYFactor = TILE_HEIGHT/2 * -1;
+            break;
+        case SOUTH:
+            walkXFactor = 0;
+            walkYFactor = TILE_HEIGHT * -1;
+            break;
+        case SOUTHWEST:
+            walkXFactor = TILE_WIDTH/2 * -1;
+            walkYFactor = TILE_HEIGHT/2 * -1;
+            break;
+        case WEST:
+            walkXFactor = TILE_WIDTH * -1;
+            walkYFactor = 0;
+            break;
+        case NORTHWEST:
+            walkXFactor = TILE_WIDTH/2 * -1;
+            walkYFactor = TILE_HEIGHT/2;
+            break;
+        default:
+            break;
+    }
 }
 
 void Model::setCurrentPosition(const TilePosition& tp)

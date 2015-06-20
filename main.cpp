@@ -235,38 +235,46 @@ void handleKeyboard(unsigned char key, int x, int y) {
         case 'w':
         case 'W':
             dv.tileWalking(NORTH);
+            m.walk(NORTH);
 //            glTranslatef(0, -1* TILE_HEIGHT, 0);
             break;
         case 'a':
         case 'A':
             dv.tileWalking(WEST);
+            m.walk(WEST);
 //            glTranslatef(TILE_WIDTH, 0, 0);
             break;
         case 's':
         case 'S':
             dv.tileWalking(SOUTH);
+            m.walk(SOUTH);
 //            glTranslatef(0, TILE_HEIGHT, 0);
             break;
         case 'd':
         case 'D':
             dv.tileWalking(EAST);
+            m.walk(EAST);
 //            glTranslatef(-1 * TILE_WIDTH, 0, 0);
             break;
         case 'q':
         case 'Q':
             dv.tileWalking(NORTHWEST);
+            m.walk(NORTHWEST);
             break;
         case 'e':
         case 'E':
             dv.tileWalking(NORTHEAST);
+            m.walk(NORTHEAST);
             break;
         case 'z':
         case 'Z':
             dv.tileWalking(SOUTHWEST);
+            m.walk(SOUTHWEST);
             break;
         case 'c':
         case 'C':
             dv.tileWalking(SOUTHEAST);
+            m.walk(SOUTHEAST);
             break;
         default:
             break;

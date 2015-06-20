@@ -3,6 +3,7 @@
 
 #include <string>
 #include "TilePosition.h"
+#include "TileMapView.h"
 
 class Model
 {
@@ -13,6 +14,8 @@ class Model
         void loadTextureFromFile(std::string file);
         void update();
         void render(int x, int y);
+
+        void walk(TileOrientation direction);
 
         unsigned getTextureId() { return texId; }
         float getTime() { return time; }
@@ -34,10 +37,12 @@ class Model
             frames = 9;
 
         float time = 0,
-            walkX, walkY;
+            walkX, walkY, walkXFactor, walkYFactor;
 
         TilePosition oldPosition,
             currentPosition;
+
+        TileOrientation direction;
 };
 
 #endif // MODEL_H
