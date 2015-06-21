@@ -49,6 +49,12 @@ void loadModel() {
 
     sprite.loadTextureFromFile("resources/tiles/char1.ptm", 9);
     m.addSpriteForDirection(sprite, SOUTH);
+
+    sprite.loadTextureFromFile("resources/tiles/west.ptm", 8);
+    m.addSpriteForDirection(sprite, WEST);
+
+    sprite.loadTextureFromFile("resources/tiles/east.ptm", 8);
+    m.addSpriteForDirection(sprite, EAST);
 }
 
 void drawDiamond(GLfloat x, GLfloat y, GLfloat width) {
