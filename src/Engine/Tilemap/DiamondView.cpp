@@ -47,12 +47,9 @@ void DiamondView::tileWalking(TileOrientation orientation)
             break;
     }
 
-    if (x >= getTilemapRows() || x < 0) {
-        x = savedX;
-    }
-
-    if (y >= getTilemapCols() || y < 0) {
+    if (x >= getTilemapRows() || x < 0 || y >= getTilemapCols() || y < 0) {
         y = savedY;
+		x = savedX;
     }
 }
 

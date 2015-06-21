@@ -303,6 +303,10 @@ void handleKeyboard(unsigned char key, int x, int y) {
 
     m.setCurrentPosition(pos);
     m.setTime(0.001f);
+	if (pos.x == cursor.x && pos.y == cursor.y) {
+		//out of bounds
+		return;
+	}
 
     cursor.x = dv.getX();
     cursor.y = dv.getY();
