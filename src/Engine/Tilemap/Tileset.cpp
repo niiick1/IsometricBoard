@@ -1,3 +1,4 @@
+#include <Windows.h>
 #include <gl/GL.h>
 #include "Tileset.h"
 #include "PTMReader.h"

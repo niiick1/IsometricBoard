@@ -1,3 +1,4 @@
+#include <Windows.h>
 #include <gl/GL.h>
 #include "Sprite.h"
 #include "PTMReader.h"

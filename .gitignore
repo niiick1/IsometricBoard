@@ -42,3 +42,4 @@
 packages.config
 packages
 Debug
+*.user
