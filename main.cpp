@@ -9,6 +9,7 @@
 #include <vector>
 #include "PTMReader.h"
 #include "Model.h"
+#include "Sprite.h"
 #include <iostream>
 
 using namespace std;
@@ -30,14 +31,25 @@ vector<RGBAColor> colorSet = {tileColorEven, tileColorOdd};
 GLuint textureID;
 
 struct Cursor {
-    int x = 5,
-        y = 5;
+    int x = 0,
+        y = 9;
 };
 
 Cursor cursor;
 PTMReader ptm;
 Tileset set;
 Model m;
+
+void loadModel() {
+    Sprite sprite("resources/tiles/southwest.ptm", 8);
+    m.addSpriteForDirection(sprite, SOUTHWEST);
+
+    sprite.loadTextureFromFile("resources/tiles/southeast.ptm", 8);
+    m.addSpriteForDirection(sprite, SOUTHEAST);
+
+    sprite.loadTextureFromFile("resources/tiles/char1.ptm", 9);
+    m.addSpriteForDirection(sprite, SOUTH);
+}
 
 void drawDiamond(GLfloat x, GLfloat y, GLfloat width) {
     GLfloat height = width / 2;
@@ -157,6 +169,7 @@ void init() {
     tm.loadTilemap();
 
 //    set.addTileFromFile("resources/tiles/bricks.ptm");
+//    set.addTileFromFile("resources/tiles/stonebrick.ptm");
     set.addTileFromFile("resources/tiles/stonebricksmooth.ptm");
 //    set.addTileFromFile("resources/tiles/grass.ptm");
     set.addTileFromFile("resources/tiles/brickwall.ptm");
@@ -164,14 +177,14 @@ void init() {
     set.addTileFromFile("resources/tiles/poring.ptm");
     set.addTileFromFile("resources/tiles/assassin.ptm");
 
-    m.loadTextureFromFile("resources/tiles/char1.ptm");
-
     TilePosition pos;
     pos.x = cursor.x;
     pos.y = cursor.y;
     m.setCurrentPosition(pos);
 
     pos = m.getCurrentPosition();
+
+    loadModel();
 }
 
 void render(void) {
@@ -203,7 +216,6 @@ void render(void) {
 
     tp = dv.calcTilePosition(cursor.x, cursor.y);
 
-    glBindTexture(GL_TEXTURE_2D, m.getTextureId());
     int cwidth = 44;
     float offX = (TILE_WIDTH - cwidth)/2;
     float currentTime = m.getTime();
@@ -211,10 +223,9 @@ void render(void) {
 
     if (currentTime != 0) {
         pos = m.getOldPosition();
-        m.setTime(currentTime +  0.2f);
+        m.setTime(currentTime +  0.1f);
     } else {
         pos = m.getCurrentPosition();
-
     }
 
     pos = dv.calcTilePosition(pos.x, pos.y);
@@ -277,7 +288,7 @@ void handleKeyboard(unsigned char key, int x, int y) {
             m.walk(SOUTHEAST);
             break;
         default:
-            break;
+            return;
     }
 
     TilePosition pos;

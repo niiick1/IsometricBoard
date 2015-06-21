@@ -13,35 +13,15 @@ Model::~Model()
     //dtor
 }
 
-void Model::loadTextureFromFile(std::string file)
+void Model::addSpriteForDirection(const Sprite& sprite, TileOrientation direction)
 {
-    PTMReader ptm;
-
-    Image* img = ptm.readFile(file);
-    unsigned textureID = 0;
-
-    width = img->getWidth() / 9;
-    height = img->getHeight();
-
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Linear Filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Linear Filtering
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->getWidth(), img->getHeight(), 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, img->getPixels());
-
-    texId = textureID;
-
-    delete img;
+    sprites[direction] = sprite;
 }
 
 void Model::update()
 {
-    currentFrame = 9 * time;
-//    std::cout << time << " and " << currentFrame << std::endl;
-//    if (++currentFrame >= frames) {
-//        currentFrame = 0;
-//    }
+    sprites[direction].setCurrentFrame(sprites[direction].getFrameCount() * time);
+//    std::cout << time << " and " << sprites[direction].getCurrentFrame() << std::endl;
 
     walkX = time * walkXFactor;
     walkY = time * walkYFactor;
@@ -50,15 +30,25 @@ void Model::update()
         time = 0;
         walkX = 0;
         walkY = 0;
+//        direction = IDLE;
     }
 }
 
 void Model::render(int x, int y)
 {
+    glBindTexture(GL_TEXTURE_2D, sprites[direction].getTextureId());
+
     glBegin(GL_QUADS);
 
-    float initX = currentFrame * (1.0f/9.0f),
-        endX = (currentFrame + 1) * (1.0f/9.0f);
+    Sprite sprite = sprites[direction];
+
+    int currentFrame = sprite.getCurrentFrame(),
+        frames = sprite.getFrameCount(),
+        width = sprite.getFrameWidth(),
+        height = sprite.getFrameHeight();
+
+    float initX = currentFrame * (1.0f / frames),
+        endX = (currentFrame + 1) * (1.0f / frames);
 
 //    std::cout << "init: " << initX << " end: " << endX << std::endl;;
 
@@ -121,6 +111,8 @@ void Model::walk(TileOrientation direction)
         default:
             break;
     }
+
+    this->direction = direction;
 }
 
 void Model::setCurrentPosition(const TilePosition& tp)

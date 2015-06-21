@@ -4,6 +4,8 @@
 #include <string>
 #include "TilePosition.h"
 #include "TileMapView.h"
+#include "Sprite.h"
+#include <map>
 
 class Model
 {
@@ -11,13 +13,15 @@ class Model
         Model();
         virtual ~Model();
 
-        void loadTextureFromFile(std::string file);
+//        void loadTextureFromFile(std::string file);
+        void addSpriteForDirection(const Sprite& sprite, TileOrientation direction);
+
         void update();
         void render(int x, int y);
 
         void walk(TileOrientation direction);
 
-        unsigned getTextureId() { return texId; }
+//        unsigned getTextureId() { return texId; }
         float getTime() { return time; }
         void setTime(float t) { time = t; }
 
@@ -26,15 +30,10 @@ class Model
 
         void setOldPosition(const TilePosition& tp) { oldPosition = tp; }
         const TilePosition& getOldPosition() const { return oldPosition; }
+
     protected:
     private:
-        int width,
-            height;
-
-        unsigned texId;
-
-        int currentFrame = 0,
-            frames = 9;
+        std::map<TileOrientation, Sprite> sprites;
 
         float time = 0,
             walkX, walkY, walkXFactor, walkYFactor;
@@ -42,7 +41,7 @@ class Model
         TilePosition oldPosition,
             currentPosition;
 
-        TileOrientation direction;
+        TileOrientation direction = SOUTH;
 };
 
 #endif // MODEL_H
