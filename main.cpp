@@ -238,7 +238,7 @@ void render(void) {
 
     if (currentTime != 0) {
         pos = m.getOldPosition();
-        m.setTime(currentTime +  0.1f);
+        m.setTime(currentTime +  0.125f);
     } else {
         pos = m.getCurrentPosition();
     }
@@ -314,9 +314,8 @@ void handleKeyboard(unsigned char key, int x, int y) {
 		//out of bounds
 		return;
 	}
-
-	m.setCurrentPosition(pos);
-	m.setTime(0.001f);
+    m.setCurrentPosition(pos);
+    m.setTime(0.00001f);
 	
 	cursor.x = dv.getX();
     cursor.y = dv.getY();
