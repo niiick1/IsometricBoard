@@ -217,37 +217,53 @@ void render(void) {
 
     for (int x = 0; x < TILE_ROWS; x++) {
         for (int y = 0; y < TILE_COLS; y++) {
+            tp = dv.calcTilePosition(x, y);
+
             Tile tile = set.getTileById(tm.getTileId(x, y));
 
             glBindTexture(GL_TEXTURE_2D, tile.getTextureId());
 
             glBegin(GL_QUADS);
-            tp = dv.calcTilePosition(x, y);
-            if (tile.getTextureId() == 1) {
-                drawBlock(tp.x, tp.y, 64, 64);
-            } else {
+
+            if (tile.getTextureId() != 1) {
                 drawDiamond(tp.x, tp.y, TILE_WIDTH);
             }
+
             glEnd();
         }
     }
 
-    tp = dv.calcTilePosition(cursor.x, cursor.y);
+    for (int x = 0; x < TILE_ROWS; x++) {
+        for (int y = 0; y < TILE_COLS; y++) {
+            if (x == cursor.x && y == cursor.y) {
+                int cwidth = 44;
+                float offX = (TILE_WIDTH - cwidth)/2;
+                float currentTime = m.getTime();
+                TilePosition pos;
 
-    int cwidth = 44;
-    float offX = (TILE_WIDTH - cwidth)/2;
-    float currentTime = m.getTime();
-    TilePosition pos;
+                if (currentTime != 0) {
+                    pos = m.getOldPosition();
+                    m.setTime(currentTime +  0.125f);
+                } else {
+                    pos = m.getCurrentPosition();
+                }
 
-    if (currentTime != 0) {
-        pos = m.getOldPosition();
-        m.setTime(currentTime +  0.125f);
-    } else {
-        pos = m.getCurrentPosition();
+                pos = dv.calcTilePosition(pos.x, pos.y);
+                m.render(pos.x + offX, pos.y + offX/2);
+            }
+
+            tp = dv.calcTilePosition(x, y);
+            Tile tile = set.getTileById(tm.getTileId(x, y));
+
+            if (tile.getTextureId() == 1) {
+                glBindTexture(GL_TEXTURE_2D, tile.getTextureId());
+                glBegin(GL_QUADS);
+                drawBlock(tp.x, tp.y, 64, 64);
+                glEnd();
+            }
+        }
     }
 
-    pos = dv.calcTilePosition(pos.x, pos.y);
-    m.render(pos.x + offX, pos.y + offX/2);
 
     glDisable(GL_TEXTURE_2D);
     glFlush();
