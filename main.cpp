@@ -5,7 +5,6 @@
 
 #include "TileMap.h"
 #include "DiamondView.h"
-#include "RGBAColor.h"
 #include <vector>
 #include "PTMReader.h"
 #include "Model.h"
@@ -24,57 +23,37 @@ const int MAP_HEIGHT = 600;
 
 TileMap tm(TILE_ROWS, TILE_COLS);
 DiamondView dv(tm, TILE_WIDTH, TILE_HEIGHT);
-RGBAColor tileColorEven(255, 0, 0);
-RGBAColor tileColorOdd(200, 0, 0);
-RGBAColor tileColorSelected(76, 241, 31);
-//RGBAColor tileColorSelected(255, 255, 255);
-RGBAColor tileBorderColor(0, 0, 0);
-vector<RGBAColor> colorSet = {tileColorEven, tileColorOdd};
-queue<TileOrientation> movementQueue;
 
-GLuint textureID;
-
-struct Cursor {
-    int x = 12,
-        y = 3;
-};
-
-struct FemalePosition {
-    int x = 11,
-        y = 1;
-};
-
-Cursor cursor;
-FemalePosition femalePos;
 PTMReader ptm;
 Tileset set;
-Model m;
+Model model;
 Model female;
+queue<TileOrientation> movementQueue;
 
 void loadModel() {
     Sprite sprite("resources/tiles/southwest.ptm", 8);
-    m.addSpriteForDirection(sprite, SOUTHWEST);
+    model.addSpriteForDirection(sprite, SOUTHWEST);
 
     sprite.loadTextureFromFile("resources/tiles/southeast.ptm", 8);
-    m.addSpriteForDirection(sprite, SOUTHEAST);
+    model.addSpriteForDirection(sprite, SOUTHEAST);
 
     sprite.loadTextureFromFile("resources/tiles/char1.ptm", 9);
-    m.addSpriteForDirection(sprite, SOUTH);
+    model.addSpriteForDirection(sprite, SOUTH);
 
     sprite.loadTextureFromFile("resources/tiles/west.ptm", 8);
-    m.addSpriteForDirection(sprite, WEST);
+    model.addSpriteForDirection(sprite, WEST);
 
     sprite.loadTextureFromFile("resources/tiles/east.ptm", 8);
-    m.addSpriteForDirection(sprite, EAST);
+    model.addSpriteForDirection(sprite, EAST);
 
     sprite.loadTextureFromFile("resources/tiles/northwest.ptm", 8);
-    m.addSpriteForDirection(sprite, NORTHWEST);
+    model.addSpriteForDirection(sprite, NORTHWEST);
 
     sprite.loadTextureFromFile("resources/tiles/northeast.ptm", 8);
-    m.addSpriteForDirection(sprite, NORTHEAST);
+    model.addSpriteForDirection(sprite, NORTHEAST);
 
     sprite.loadTextureFromFile("resources/tiles/north.ptm", 8);
-    m.addSpriteForDirection(sprite, NORTH);
+    model.addSpriteForDirection(sprite, NORTH);
 
     sprite.loadTextureFromFile("resources/tiles/female.ptm", 1);
     female.addSpriteForDirection(sprite, SOUTH);
@@ -198,28 +177,26 @@ void init() {
 
     tm.loadTilemap("resources/map/map.txt");
 
-//    set.addTileFromFile("resources/tiles/bricks.ptm");
-//    set.addTileFromFile("resources/tiles/stonebrick.ptm");
-    set.addTileFromFile("resources/tiles/brickwall.ptm");
-    set.addTileFromFile("resources/tiles/stonebricksmooth.ptm");
-//    set.addTileFromFile("resources/tiles/grass.ptm");
+    set.addTileFromFile("resources/tiles/brickwall.ptm");		 // 1
+    set.addTileFromFile("resources/tiles/stonebricksmooth.ptm"); // 2
+    set.addTileFromFile("resources/tiles/grass.ptm");			 // 3
+    set.addTileFromFile("resources/tiles/ground.ptm");			 // 4
 
-//    set.addTileFromFile("resources/tiles/ground.ptm");
-    set.addTileFromFile("resources/tiles/poring.ptm");
-    set.addTileFromFile("resources/tiles/assassin.ptm");
-
+	//Initial model and objective positions
     TilePosition pos;
-    pos.x = cursor.x;
-    pos.y = cursor.y;
-    m.setCurrentPosition(pos);
+    pos.x = 12;
+    pos.y = 3;
+    model.setCurrentPosition(pos);
 
-    pos = m.getCurrentPosition();
+	TilePosition femalePos;
+	femalePos.x = 11;
+	femalePos.y = 1;
+	female.setCurrentPosition(femalePos);
 
     loadModel();
 }
 
-void render(void) {
-    RGBAColor color;
+void render(void) {    
     TilePosition tp;
 
     glClearColor(0, 0, 0, 0);
@@ -248,23 +225,25 @@ void render(void) {
 
     for (int x = 0; x < TILE_ROWS; x++) {
         for (int y = 0; y < TILE_COLS; y++) {
-            TilePosition pos;
+			TilePosition pos = model.getCurrentPosition();
 
-            if (x == cursor.x && y == cursor.y) {
+            if (x == pos.x && y == pos.y) {
                 int cwidth = 44;
                 float offX = (TILE_WIDTH - cwidth)/2;
-                float currentTime = m.getTime();
+                float currentTime = model.getTime();
 
                 if (currentTime != 0) {
-                    pos = m.getOldPosition();
-                    m.setTime(currentTime +  0.125f);
+                    pos = model.getOldPosition();
+                    model.setTime(currentTime +  0.125f);
                 } else {
-                    pos = m.getCurrentPosition();
+                    pos = model.getCurrentPosition();
                 }
 
                 pos = dv.calcTilePosition(pos.x, pos.y);
-                m.render(pos.x + offX, pos.y + offX/2);
+                model.render(pos.x + offX, pos.y + offX/2);
             }
+
+			TilePosition femalePos = female.getCurrentPosition();
 
             if (x == femalePos.x && y == femalePos.y) {
                 int cwidth = 51;
@@ -291,7 +270,7 @@ void render(void) {
 }
 
 void victory() {
-	glRasterPos2i(100, 100);
+	glRasterPos2i(200, 110);
 	glColor3f(0.0, 1.0, 0.5);
 	glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)"WONNED!!!");
 	glFlush();
@@ -302,7 +281,9 @@ void victory() {
 
 bool detectCollision(TilePosition pos) {
 
-	if (pos.x == cursor.x && pos.y == cursor.y) {
+	TilePosition currentPosition = model.getCurrentPosition();
+
+	if (pos.x == currentPosition.x && pos.y == currentPosition.y) {
 		//out of bounds
 		return true;
 	}
@@ -314,6 +295,7 @@ bool detectCollision(TilePosition pos) {
 		return true;
 	}
 
+	TilePosition femalePos = female.getCurrentPosition();
 	if (pos.x == femalePos.x && pos.y == femalePos.y) {
 		// Wonned
 		victory();
@@ -325,10 +307,11 @@ bool detectCollision(TilePosition pos) {
 
 void tileWalking(TileOrientation orientation) {
 
+	TilePosition cursor = model.getCurrentPosition();
 	dv.calcTilePosition(cursor.x, cursor.y);
 
 	dv.tileWalking(orientation);
-	m.walk(orientation);
+	model.walk(orientation);
 
 	TilePosition pos;
 	pos.x = dv.getX();
@@ -340,17 +323,14 @@ void tileWalking(TileOrientation orientation) {
 		return;
 	}
 
-	m.setCurrentPosition(pos);
-	m.setTime(0.00001f);
-
-	cursor.x = dv.getX();
-	cursor.y = dv.getY();
+	model.setCurrentPosition(pos);
+	model.setTime(0.00001f);
 
 }
 
 void processQueue() {
 
-	if (m.getTime() != 0 || movementQueue.empty()) {
+	if (model.getTime() != 0 || movementQueue.empty()) {
 		return;
 	}
 
@@ -406,6 +386,7 @@ void handleMouse(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 
 		TilePosition pos = dv.screenToTilePosition(x, y, MAP_WIDTH, MAP_HEIGHT);
+		TilePosition cursor = model.getCurrentPosition();
 
         cout << "Cursor at " << pos.x << "x" << pos.y << "\n";
 
@@ -413,40 +394,32 @@ void handleMouse(int button, int state, int x, int y) {
         int tileY = cursor.y - pos.y;
 
         if (tileY < 0) {
-            if (tileX < 0) {
-                cout << "1 - Move to SouthWest" << "\n";                
+            if (tileX < 0) {                
  				walkQueue(SOUTHWEST, tileY * tileX);
             }
-            else if (tileX > 0) {
-                cout << "2- Move to NorthWest" << "\n";                
+            else if (tileX > 0) {                
 				walkQueue(NORTHWEST, -tileY * tileX);
             }
-            else {                
-                cout << "3 - Move to West" << "\n";
+            else {                                
 				walkQueue(WEST, -tileY);
             }
         }
         else if (tileY > 0) {
-            if (tileX < 0) {                                
-                cout << "4 - Move to NorthEast" << "\n";
+            if (tileX < 0) {                                                
 				walkQueue(NORTHEAST, tileY * -tileX);
             }
-            else if (tileX > 0) {
-                cout << "5 - Move to NorthWest" << "\n";
+            else if (tileX > 0) {                
 				walkQueue(NORTHWEST, tileY * tileX);
             }
-            else {
-                cout << "6 - Move to North" << "\n";
+            else {                
 				walkQueue(NORTH, tileY);
             }
         }
         else {
-            if (tileX < 0) {
-                cout << "7 - Move to SouthEast" << "\n";
+            if (tileX < 0) {                
 				walkQueue(SOUTHEAST, -tileX);
             }
-            else if (tileX > 0) {
-                cout << "8 - Move to NorthWest" << "\n";
+            else if (tileX > 0) {                
 				walkQueue(NORTHWEST, tileX);
             }
         }
@@ -455,7 +428,7 @@ void handleMouse(int button, int state, int x, int y) {
 }
 
 void animate(int t) {
-    m.update(processQueue);
+    model.update(processQueue);
     glutTimerFunc(30, animate, 0);
     glutPostRedisplay();
 }
