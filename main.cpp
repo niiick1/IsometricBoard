@@ -89,76 +89,6 @@ void drawBlock(GLfloat x, GLfloat y, GLfloat width, GLfloat height) {
     glVertex2f(x + width, y);
 }
 
-void drawTile(GLfloat x, GLfloat y, GLfloat width, GLint volume) {
-    float height = width / 2;
-
-    glBegin(GL_QUADS);
-    drawDiamond(x, y, width);
-    glEnd();
-
-    glBegin(GL_QUADS);
-        glVertex2f(x, height / 2 - y);
-        glVertex2f(width / 2 + x, height - y);
-        glVertex2f(width / 2 + x, height - y - volume);
-        glVertex2f(x, height / 2 - y - volume);
-    glEnd();
-
-    glBegin(GL_QUADS);
-        glVertex2f(width / 2 + x, height - y);
-        glVertex2f(width + x, height / 2 - y);
-        glVertex2f(width + x, height / 2 - y - volume);
-        glVertex2f(width / 2 + x, height - y - volume);
-    glEnd();
-}
-
-void drawCharacter(GLfloat x, GLfloat y) {
-    int width = 45,
-        height = 95;
-
-    float tempX = (TILE_WIDTH - width)/2,
-        tempY = (TILE_HEIGHT - height)/2;
-
-    if (tempX > 0) x += tempX;
-
-    y += tempX/2;
-
-    glTexCoord2f(0, 0);
-    glVertex2f(x, y);
-
-    glTexCoord2f(0, 1);
-    glVertex2f(x, y + height);
-
-    glTexCoord2f(1, 1);
-    glVertex2f(x + width, y + height);
-
-    glTexCoord2f(1, 0);
-    glVertex2f(x + width, y);
-}
-
-void drawPoring(GLfloat x, GLfloat y) {
-    int width = 39,
-        height = 33;
-
-
-    float tempX = (TILE_WIDTH - width)/2,
-        tempY = (TILE_HEIGHT - height)/2;
-
-    if (tempX > 0) x += tempX;
-    y += tempX/2;
-
-    glTexCoord2f(0, 0);
-    glVertex2f(x, y);
-
-    glTexCoord2f(0, 1);
-    glVertex2f(x, y + height);
-
-    glTexCoord2f(1, 1);
-    glVertex2f(x + width, y + height);
-
-    glTexCoord2f(1, 0);
-    glVertex2f(x + width, y);
-}
-
 void resetModel() {
 
 	//Initial model and objective positions
@@ -189,8 +119,8 @@ void init() {
 
     set.addTileFromFile("resources/tiles/brickwall.ptm");		 // 1
     set.addTileFromFile("resources/tiles/stonebricksmooth.ptm"); // 2
-    set.addTileFromFile("resources/tiles/grass.ptm");			 // 3
-    set.addTileFromFile("resources/tiles/ground.ptm");			 // 4
+//    set.addTileFromFile("resources/tiles/grass.ptm");			 // 3
+//    set.addTileFromFile("resources/tiles/ground.ptm");			 // 4
 
 	resetModel();
 
