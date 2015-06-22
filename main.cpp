@@ -346,78 +346,86 @@ void handleKeyboard(unsigned char key, int x, int y) {
     pos.x = dv.getX();
     pos.y = dv.getY();
 
-	if (pos.x == cursor.x && pos.y == cursor.y) {
-		//out of bounds
-		return;
-	}
+    if (pos.x == cursor.x && pos.y == cursor.y) {
+        //out of bounds
+        return;
+    }
+
+    Tile tile = set.getTileById(tm.getTileId(pos.x, pos.y));
+
+    if (tile.getTextureId() == 1) {
+		//block collision
+        return;
+    }
+
     m.setCurrentPosition(pos);
     m.setTime(0.00001f);
-	
-	cursor.x = dv.getX();
+    
+    cursor.x = dv.getX();
     cursor.y = dv.getY();
 }
 
 void handleMouse(int button, int state, int x, int y) {
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 
-		int base = (600 - (TILE_COLS * TILE_HEIGHT)) / 2;
-		int baseY = y - base;
+        int base = (600 - (TILE_COLS * TILE_HEIGHT)) / 2;
+        int baseY = y - base;
 
-		base = (800 - (TILE_ROWS * TILE_WIDTH)) / 2;
-		int baseX = x - base;
+        base = (800 - (TILE_ROWS * TILE_WIDTH)) / 2;
+        int baseX = x - base;
 
-		int w = TILE_WIDTH / 2;
-		int h = TILE_HEIGHT / 2;
+        int w = TILE_WIDTH / 2;
+        int h = TILE_HEIGHT / 2;
 
-		int posX = ((baseX * h) + (baseY * w) - ((TILE_COLS * w) + w) * h) / 1024;
-		int posY = ((baseX * -h) + (baseY * w) + ((TILE_COLS * w) + w) * h) / 1024;
+        int posX = ((baseX * h) + (baseY * w) - ((TILE_COLS * w) + w) * h) / 1024;
+        int posY = ((baseX * -h) + (baseY * w) + ((TILE_COLS * w) + w) * h) / 1024;
 
-		cout << "cX: " << posX << "\n";
-		cout << "cY: " << posY << "\n";
+        cout << "Cursor at " << posX << "x" << posY << "\n";
 
-		int tileX = cursor.x - posX;
-		int tileY = cursor.y - posY;
 
-		if (tileY < 0) {
-			if (tileX < 0) {
-				cout << "1 - Move to SouthEast" << "\n";
-				handleKeyboard('Z', x, y);				
-			}
-			else if (tileX > 0) {
-				cout << "2- Move to NorthEast" << "\n";
-				handleKeyboard('Q', x, y);				
-			}
-			else {				
-				cout << "3 - Move to South" << "\n";
-				handleKeyboard('S', x, y);				
-			}
-		}
-		else if (tileY > 0) {
-			if (tileX < 0) {								
-				cout << "4 - Move to NorthWest" << "\n";
-				handleKeyboard('E', x, y);				
-			}
-			else if (tileX > 0) {
-				cout << "5 - Move to NorthEast" << "\n";
-				handleKeyboard('Q', x, y);
-			}
-			else {				
-				cout << "6 - Move to North" << "\n";
-				handleKeyboard('W', x, y);
-			}
-		}
-		else {
-			if (tileX < 0) {
-				cout << "7 - Move to SouthWest" << "\n";
-				handleKeyboard('C', x, y);
-			}
-			else if (tileX > 0) {
-				cout << "8 - Move to NorthEast" << "\n";
-				handleKeyboard('Q', x, y);
-			}
-		}
+        int tileX = cursor.x - posX;
+        int tileY = cursor.y - posY;
 
-	}
+        if (tileY < 0) {
+            if (tileX < 0) {
+                cout << "1 - Move to SouthEast" << "\n";
+                handleKeyboard('Z', x, y);                
+            }
+            else if (tileX > 0) {
+                cout << "2- Move to NorthEast" << "\n";
+                handleKeyboard('Q', x, y);                
+            }
+            else {                
+                cout << "3 - Move to East" << "\n";
+                handleKeyboard('A', x, y);                
+            }
+        }
+        else if (tileY > 0) {
+            if (tileX < 0) {                                
+                cout << "4 - Move to NorthWest" << "\n";
+                handleKeyboard('E', x, y);                
+            }
+            else if (tileX > 0) {
+                cout << "5 - Move to NorthEast" << "\n";
+                handleKeyboard('Q', x, y);
+            }
+            else {                
+                cout << "6 - Move to North" << "\n";
+                handleKeyboard('W', x, y);
+            }
+        }
+        else {
+            if (tileX < 0) {
+                cout << "7 - Move to SouthWest" << "\n";
+                handleKeyboard('C', x, y);
+            }
+            else if (tileX > 0) {
+                cout << "8 - Move to NorthEast" << "\n";
+                handleKeyboard('Q', x, y);
+            }
+        }
+
+    }
 }
 
 void animate(int t) {
@@ -441,8 +449,8 @@ int main(int argc, char* argv[])
     init();
 
     glutKeyboardFunc(handleKeyboard);
-	glutMouseFunc(handleMouse);
-	glutDisplayFunc(render);
+    glutMouseFunc(handleMouse);
+    glutDisplayFunc(render);
 
     glutTimerFunc(33, animate, 0);
     glutMainLoop();
