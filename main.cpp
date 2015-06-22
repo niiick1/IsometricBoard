@@ -181,8 +181,6 @@ void init() {
     glLoadIdentity();
     glTranslatef(0, 150, 0);
 
-    tm.loadTilemap();
-
     tm.loadTilemap("resources/map/map.txt");
 
 //    set.addTileFromFile("resources/tiles/bricks.ptm");
@@ -340,6 +338,27 @@ void handleKeyboard(unsigned char key, int x, int y) {
     cursor.y = dv.getY();
 }
 
+void handleMouse(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+
+		int base = (600 - (TILE_COLS * TILE_HEIGHT)) / 2;
+		int baseY = y - base;
+
+		base = (800 - (TILE_ROWS * TILE_WIDTH)) / 2;
+		int baseX = x - base;
+
+		int w = TILE_WIDTH / 2;
+		int h = TILE_HEIGHT / 2;
+
+		int posX = ((baseX * h) + (baseY * w) - ((TILE_COLS * w) + w) * h) / 1024;
+		int posY = ((baseX * -h) + (baseY * w) + ((TILE_COLS * w) + w) * h) / 1024;
+
+		cout << "cX: " << posX << "\n";
+		cout << "cY: " << posY << "\n";
+
+	}
+}
+
 void animate(int t) {
     m.update();
     glutTimerFunc(30, animate, 0);
@@ -361,6 +380,7 @@ int main(int argc, char* argv[])
     init();
 
     glutKeyboardFunc(handleKeyboard);
+	glutMouseFunc(handleMouse);
 	glutDisplayFunc(render);
 
     glutTimerFunc(33, animate, 0);
