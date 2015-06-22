@@ -159,6 +159,16 @@ void drawPoring(GLfloat x, GLfloat y) {
     glVertex2f(x + width, y);
 }
 
+void resetModel() {
+
+	//Initial model and objective positions
+	TilePosition pos;
+	pos.x = 12;
+	pos.y = 3;
+	model.setCurrentPosition(pos);
+
+}
+
 void init() {
     glClearColor(1, 1, 1, 0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -182,11 +192,7 @@ void init() {
     set.addTileFromFile("resources/tiles/grass.ptm");			 // 3
     set.addTileFromFile("resources/tiles/ground.ptm");			 // 4
 
-	//Initial model and objective positions
-    TilePosition pos;
-    pos.x = 12;
-    pos.y = 3;
-    model.setCurrentPosition(pos);
+	resetModel();
 
 	TilePosition femalePos;
 	femalePos.x = 11;
@@ -276,6 +282,7 @@ void victory() {
 	glFlush();
 
 	system("pause");
+	resetModel();
 }
 
 
