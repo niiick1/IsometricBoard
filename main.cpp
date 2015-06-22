@@ -37,7 +37,7 @@ void loadModel() {
     sprite.loadTextureFromFile("resources/tiles/southeast.ptm", 8);
     model.addSpriteForDirection(sprite, SOUTHEAST);
 
-    sprite.loadTextureFromFile("resources/tiles/char1.ptm", 9);
+    sprite.loadTextureFromFile("resources/tiles/south.ptm", 9);
     model.addSpriteForDirection(sprite, SOUTH);
 
     sprite.loadTextureFromFile("resources/tiles/west.ptm", 8);
@@ -202,7 +202,7 @@ void init() {
     loadModel();
 }
 
-void render(void) {    
+void render(void) {
     TilePosition tp;
 
     glClearColor(0, 0, 0, 0);
@@ -308,7 +308,7 @@ bool detectCollision(TilePosition pos) {
 		victory();
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -348,7 +348,7 @@ void processQueue() {
 }
 
 void walkQueue(enum TileOrientation orientation, int size = 1) {
-	
+
 	for (int i = 0; i < size; i++) {
 		movementQueue.push(orientation);
 	}
@@ -359,24 +359,24 @@ void walkQueue(enum TileOrientation orientation, int size = 1) {
 
 void handleKeyboard(unsigned char key, int x, int y) {
 
-    switch (toupper(key)) {        
-        case 'W':	
+    switch (toupper(key)) {
+        case 'W':
 			walkQueue(NORTH);
-            break;        
+            break;
         case 'A':
 			walkQueue(WEST);
-            break;        
+            break;
         case 'S':
-            walkQueue(SOUTH);            
-            break;        
+            walkQueue(SOUTH);
+            break;
         case 'D':
-            walkQueue(EAST);            
+            walkQueue(EAST);
             break;
         case 'Q':
-            walkQueue(NORTHWEST);            
-            break;        
+            walkQueue(NORTHWEST);
+            break;
         case 'E':
-            walkQueue(NORTHEAST);            
+            walkQueue(NORTHEAST);
             break;
         case 'Z':
             walkQueue(SOUTHWEST);
@@ -401,32 +401,32 @@ void handleMouse(int button, int state, int x, int y) {
         int tileY = cursor.y - pos.y;
 
         if (tileY < 0) {
-            if (tileX < 0) {                
+            if (tileX < 0) {
  				walkQueue(SOUTHWEST, tileY * tileX);
             }
-            else if (tileX > 0) {                
+            else if (tileX > 0) {
 				walkQueue(NORTHWEST, -tileY * tileX);
             }
-            else {                                
+            else {
 				walkQueue(WEST, -tileY);
             }
         }
         else if (tileY > 0) {
-            if (tileX < 0) {                                                
+            if (tileX < 0) {
 				walkQueue(NORTHEAST, tileY * -tileX);
             }
-            else if (tileX > 0) {                
+            else if (tileX > 0) {
 				walkQueue(NORTHWEST, tileY * tileX);
             }
-            else {                
+            else {
 				walkQueue(NORTH, tileY);
             }
         }
         else {
-            if (tileX < 0) {                
+            if (tileX < 0) {
 				walkQueue(SOUTHEAST, -tileX);
             }
-            else if (tileX > 0) {                
+            else if (tileX > 0) {
 				walkQueue(NORTHWEST, tileX);
             }
         }
