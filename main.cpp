@@ -35,10 +35,17 @@ struct Cursor {
         y = 3;
 };
 
+struct FemalePosition {
+    int x = 11,
+        y = 1;
+};
+
 Cursor cursor;
+FemalePosition femalePos;
 PTMReader ptm;
 Tileset set;
 Model m;
+Model female;
 
 void loadModel() {
     Sprite sprite("resources/tiles/southwest.ptm", 8);
@@ -64,6 +71,9 @@ void loadModel() {
 
     sprite.loadTextureFromFile("resources/tiles/north.ptm", 8);
     m.addSpriteForDirection(sprite, NORTH);
+
+    sprite.loadTextureFromFile("resources/tiles/female.ptm", 1);
+    female.addSpriteForDirection(sprite, SOUTH);
 }
 
 void drawDiamond(GLfloat x, GLfloat y, GLfloat width) {
@@ -233,11 +243,12 @@ void render(void) {
 
     for (int x = 0; x < TILE_ROWS; x++) {
         for (int y = 0; y < TILE_COLS; y++) {
+            TilePosition pos;
+
             if (x == cursor.x && y == cursor.y) {
                 int cwidth = 44;
                 float offX = (TILE_WIDTH - cwidth)/2;
                 float currentTime = m.getTime();
-                TilePosition pos;
 
                 if (currentTime != 0) {
                     pos = m.getOldPosition();
@@ -248,6 +259,14 @@ void render(void) {
 
                 pos = dv.calcTilePosition(pos.x, pos.y);
                 m.render(pos.x + offX, pos.y + offX/2);
+            }
+
+            if (x == femalePos.x && y == femalePos.y) {
+                int cwidth = 51;
+                float offX = (TILE_WIDTH - cwidth)/2;
+
+                pos = dv.calcTilePosition(femalePos.x, femalePos.y);
+                female.render(pos.x + offX, pos.y + offX/2);
             }
 
             tp = dv.calcTilePosition(x, y);
