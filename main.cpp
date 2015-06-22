@@ -1,7 +1,7 @@
 #include <Windows.h>
 #include <gl/GL.h>
 #include <gl/glu.h>
-#include <gl/glut.h>
+#include <GL\freeglut.h>
 
 #include "TileMap.h"
 #include "DiamondView.h"
@@ -192,6 +192,7 @@ void init() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(0, 150, 0);
+	glColor3f(0.0, 1.0, 0.5);
 
     tm.loadTilemap("resources/map/map.txt");
 
@@ -283,10 +284,19 @@ void render(void) {
         }
     }
 
-
     glDisable(GL_TEXTURE_2D);
     glFlush();
 }
+
+void victory() {
+	glRasterPos2i(100, 100);
+	glColor3f(0.0, 1.0, 0.5);
+	glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)"WONNED!!!");
+	glFlush();
+
+	system("pause");
+}
+
 
 bool detectCollision(TilePosition pos) {
 
@@ -301,9 +311,16 @@ bool detectCollision(TilePosition pos) {
 		//block collision
 		return true;
 	}
+
+	if (pos.x == femalePos.x && pos.y == femalePos.y) {
+		// Wonned
+		victory();
+		return true;
+	}
 	
 	return false;
 }
+
 
 void walk(enum TileOrientation orientation) {
 
