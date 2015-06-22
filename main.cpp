@@ -16,8 +16,8 @@ using namespace std;
 
 const int TILE_WIDTH = 64;
 const int TILE_HEIGHT = TILE_WIDTH / 2;
-const int TILE_ROWS = 12;
-const int TILE_COLS = 13;
+const int TILE_ROWS = 13;
+const int TILE_COLS = 12;
 
 TileMap tm(TILE_ROWS, TILE_COLS);
 DiamondView dv(tm, TILE_WIDTH, TILE_HEIGHT);
@@ -31,8 +31,8 @@ vector<RGBAColor> colorSet = {tileColorEven, tileColorOdd};
 GLuint textureID;
 
 struct Cursor {
-    int x = 1,
-        y = 1;
+    int x = 12,
+        y = 3;
 };
 
 Cursor cursor;

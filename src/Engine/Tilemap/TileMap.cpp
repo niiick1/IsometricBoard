@@ -74,7 +74,7 @@ void TileMap::loadTilemap(std::string file)
 
         for (int y = 0; y < w; y++) {
             string pos = buffer.substr(y * 2, 1);
-            map[x][y] = stoi(pos) - 1;
+            map[y][x] = stoi(pos) - 1;
             cout << pos;
         }
 
