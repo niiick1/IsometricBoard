@@ -16,8 +16,8 @@ using namespace std;
 
 const int TILE_WIDTH = 64;
 const int TILE_HEIGHT = TILE_WIDTH / 2;
-const int TILE_ROWS = 57;
-const int TILE_COLS = 56;
+const int TILE_ROWS = 12;
+const int TILE_COLS = 13;
 
 TileMap tm(TILE_ROWS, TILE_COLS);
 DiamondView dv(tm, TILE_WIDTH, TILE_HEIGHT);
@@ -31,8 +31,8 @@ vector<RGBAColor> colorSet = {tileColorEven, tileColorOdd};
 GLuint textureID;
 
 struct Cursor {
-    int x = 0,
-        y = 9;
+    int x = 1,
+        y = 1;
 };
 
 Cursor cursor;
@@ -179,15 +179,18 @@ void init() {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glTranslatef(-400, 0, 0);
+    glTranslatef(0, 150, 0);
 
     tm.loadTilemap();
 
+    tm.loadTilemap("resources/map/map.txt");
+
 //    set.addTileFromFile("resources/tiles/bricks.ptm");
 //    set.addTileFromFile("resources/tiles/stonebrick.ptm");
+    set.addTileFromFile("resources/tiles/brickwall.ptm");
     set.addTileFromFile("resources/tiles/stonebricksmooth.ptm");
 //    set.addTileFromFile("resources/tiles/grass.ptm");
-    set.addTileFromFile("resources/tiles/brickwall.ptm");
+
 //    set.addTileFromFile("resources/tiles/ground.ptm");
     set.addTileFromFile("resources/tiles/poring.ptm");
     set.addTileFromFile("resources/tiles/assassin.ptm");
@@ -213,14 +216,14 @@ void render(void) {
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
     for (int x = 0; x < TILE_ROWS; x++) {
-        for (int y = TILE_COLS - 1; y >= 0; y--) {
+        for (int y = 0; y < TILE_COLS; y++) {
             Tile tile = set.getTileById(tm.getTileId(x, y));
 
             glBindTexture(GL_TEXTURE_2D, tile.getTextureId());
 
             glBegin(GL_QUADS);
             tp = dv.calcTilePosition(x, y);
-            if (tile.getTextureId() == 2) {
+            if (tile.getTextureId() == 1) {
                 drawBlock(tp.x, tp.y, 64, 64);
             } else {
                 drawDiamond(tp.x, tp.y, TILE_WIDTH);

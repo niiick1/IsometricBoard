@@ -2,6 +2,7 @@
 #define TILEMAP_H
 
 #include <vector>
+#include <string>
 #include "Tileset.h"
 
 class TileMap
@@ -14,7 +15,7 @@ class TileMap
         int getRows() { return rows; }
         int getCols() { return cols; }
 
-        void loadTilemap();
+        void loadTilemap(std::string file);
     protected:
     private:
         int rows,

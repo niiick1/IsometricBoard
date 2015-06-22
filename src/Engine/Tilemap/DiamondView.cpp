@@ -17,28 +17,28 @@ void DiamondView::tileWalking(TileOrientation orientation)
     switch (orientation) {
         case NORTH:
             x--;
-            y++;
+            y--;
             break;
         case NORTHEAST:
-            y++;
+            y--;
             break;
         case EAST:
             x++;
-            y++;
+            y--;
             break;
         case SOUTHEAST:
             x++;
             break;
         case SOUTH:
             x++;
-            y--;
+            y++;
             break;
         case SOUTHWEST:
-            y--;
+            y++;
             break;
         case WEST:
             x--;
-            y--;
+            y++;
             break;
         case NORTHWEST:
             x--;
@@ -65,8 +65,8 @@ TilePosition DiamondView::calcTilePosition(int x, int y)
 
     TilePosition tp;
 
-    tp.x = (x * width/2) + (y * width/2);
-    tp.y = (y * height/2) - (x * height/2);
+    tp.x = (x * width/2) - (y * width/2);
+    tp.y = ((y * height/2) * -1) - (x * height/2);
 
     return tp;
 }
