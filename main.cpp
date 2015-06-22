@@ -278,7 +278,7 @@ void render(void) {
 void victory() {
 	glRasterPos2i(200, 110);
 	glColor3f(0.0, 1.0, 0.5);
-	glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)"WONNED!!!");
+	glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)"You WIN!!!");
 	glFlush();
 
 	system("pause");
@@ -304,7 +304,7 @@ bool detectCollision(TilePosition pos) {
 
 	TilePosition femalePos = female.getCurrentPosition();
 	if (pos.x == femalePos.x && pos.y == femalePos.y) {
-		// Wonned
+		// Win
 		victory();
 		return true;
 	}
