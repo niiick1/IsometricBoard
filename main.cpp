@@ -375,6 +375,48 @@ void handleMouse(int button, int state, int x, int y) {
 		cout << "cX: " << posX << "\n";
 		cout << "cY: " << posY << "\n";
 
+		int tileX = cursor.x - posX;
+		int tileY = cursor.y - posY;
+
+		if (tileY < 0) {
+			if (tileX < 0) {
+				cout << "1 - Move to SouthEast" << "\n";
+				handleKeyboard('Z', x, y);				
+			}
+			else if (tileX > 0) {
+				cout << "2- Move to NorthEast" << "\n";
+				handleKeyboard('Q', x, y);				
+			}
+			else {				
+				cout << "3 - Move to South" << "\n";
+				handleKeyboard('S', x, y);				
+			}
+		}
+		else if (tileY > 0) {
+			if (tileX < 0) {								
+				cout << "4 - Move to NorthWest" << "\n";
+				handleKeyboard('E', x, y);				
+			}
+			else if (tileX > 0) {
+				cout << "5 - Move to NorthEast" << "\n";
+				handleKeyboard('Q', x, y);
+			}
+			else {				
+				cout << "6 - Move to North" << "\n";
+				handleKeyboard('W', x, y);
+			}
+		}
+		else {
+			if (tileX < 0) {
+				cout << "7 - Move to SouthWest" << "\n";
+				handleKeyboard('C', x, y);
+			}
+			else if (tileX > 0) {
+				cout << "8 - Move to NorthEast" << "\n";
+				handleKeyboard('Q', x, y);
+			}
+		}
+
 	}
 }
 
