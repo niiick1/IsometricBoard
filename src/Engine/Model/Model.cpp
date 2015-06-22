@@ -5,6 +5,9 @@
 #include "PTMReader.h"
 #include <iostream>
 
+//Function pointer called CallbackType
+typedef void(*CallbackType)();
+
 Model::Model()
 {
 }
@@ -19,7 +22,7 @@ void Model::addSpriteForDirection(const Sprite& sprite, TileOrientation directio
     sprites[direction] = sprite;
 }
 
-void Model::update()
+void Model::update(CallbackType callback)
 {
     sprites[direction].setCurrentFrame(sprites[direction].getFrameCount() * time);
 //    std::cout << time << " and " << sprites[direction].getCurrentFrame() << std::endl;
@@ -31,6 +34,7 @@ void Model::update()
         time = 0;
         walkX = 0;
         walkY = 0;
+		callback();
 //        direction = IDLE;
     }
 }

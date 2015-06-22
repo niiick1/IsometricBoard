@@ -11,6 +11,7 @@
 #include "Model.h"
 #include "Sprite.h"
 #include <iostream>
+#include <queue>
 
 using namespace std;
 
@@ -29,6 +30,7 @@ RGBAColor tileColorSelected(76, 241, 31);
 //RGBAColor tileColorSelected(255, 255, 255);
 RGBAColor tileBorderColor(0, 0, 0);
 vector<RGBAColor> colorSet = {tileColorEven, tileColorOdd};
+queue<TileOrientation> movementQueue;
 
 GLuint textureID;
 
@@ -321,12 +323,7 @@ bool detectCollision(TilePosition pos) {
 	return false;
 }
 
-
-void walk(enum TileOrientation orientation) {
-
-	if (m.getTime() != 0) {
-		return;
-	}
+void tileWalking(TileOrientation orientation) {
 
 	dv.calcTilePosition(cursor.x, cursor.y);
 
@@ -338,6 +335,8 @@ void walk(enum TileOrientation orientation) {
 	pos.y = dv.getY();
 
 	if (detectCollision(pos)) {
+		queue<TileOrientation> empty;
+		swap(movementQueue, empty);
 		return;
 	}
 
@@ -349,32 +348,54 @@ void walk(enum TileOrientation orientation) {
 
 }
 
+void processQueue() {
+
+	if (m.getTime() != 0 || movementQueue.empty()) {
+		return;
+	}
+
+	TileOrientation orientation = movementQueue.front();
+	movementQueue.pop();
+
+	tileWalking(orientation);
+}
+
+void walkQueue(enum TileOrientation orientation, int size = 1) {
+	
+	for (int i = 0; i < size; i++) {
+		movementQueue.push(orientation);
+	}
+
+	processQueue();
+
+}
+
 void handleKeyboard(unsigned char key, int x, int y) {
 
     switch (toupper(key)) {        
         case 'W':	
-			walk(NORTH);
+			walkQueue(NORTH);
             break;        
         case 'A':
-			walk(WEST);
+			walkQueue(WEST);
             break;        
         case 'S':
-            walk(SOUTH);            
+            walkQueue(SOUTH);            
             break;        
         case 'D':
-            walk(EAST);            
+            walkQueue(EAST);            
             break;
         case 'Q':
-            walk(NORTHWEST);            
+            walkQueue(NORTHWEST);            
             break;        
         case 'E':
-            walk(NORTHEAST);            
+            walkQueue(NORTHEAST);            
             break;
         case 'Z':
-            walk(SOUTHWEST);
+            walkQueue(SOUTHWEST);
             break;
         case 'C':
-            walk(SOUTHEAST);
+            walkQueue(SOUTHEAST);
             break;
         default:
             return;
@@ -394,39 +415,39 @@ void handleMouse(int button, int state, int x, int y) {
         if (tileY < 0) {
             if (tileX < 0) {
                 cout << "1 - Move to SouthWest" << "\n";                
- 				walk(SOUTHWEST);
+ 				walkQueue(SOUTHWEST, tileY * tileX);
             }
             else if (tileX > 0) {
                 cout << "2- Move to NorthWest" << "\n";                
-				walk(NORTHWEST);
+				walkQueue(NORTHWEST, -tileY * tileX);
             }
             else {                
                 cout << "3 - Move to West" << "\n";
-				walk(WEST);
+				walkQueue(WEST, -tileY);
             }
         }
         else if (tileY > 0) {
             if (tileX < 0) {                                
                 cout << "4 - Move to NorthEast" << "\n";
-				walk(NORTHEAST);
+				walkQueue(NORTHEAST, tileY * -tileX);
             }
             else if (tileX > 0) {
                 cout << "5 - Move to NorthWest" << "\n";
-				walk(NORTHWEST);
+				walkQueue(NORTHWEST, tileY * tileX);
             }
             else {
                 cout << "6 - Move to North" << "\n";
-				walk(NORTH);
+				walkQueue(NORTH, tileY);
             }
         }
         else {
             if (tileX < 0) {
                 cout << "7 - Move to SouthEast" << "\n";
-				walk(SOUTHEAST);
+				walkQueue(SOUTHEAST, -tileX);
             }
             else if (tileX > 0) {
                 cout << "8 - Move to NorthWest" << "\n";
-				walk(NORTHWEST);
+				walkQueue(NORTHWEST, tileX);
             }
         }
 
@@ -434,7 +455,7 @@ void handleMouse(int button, int state, int x, int y) {
 }
 
 void animate(int t) {
-    m.update();
+    m.update(processQueue);
     glutTimerFunc(30, animate, 0);
     glutPostRedisplay();
 }

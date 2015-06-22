@@ -7,6 +7,9 @@
 #include "Sprite.h"
 #include <map>
 
+//Function pointer called CallbackType
+typedef void(*CallbackType)();
+
 class Model
 {
     public:
@@ -16,7 +19,7 @@ class Model
 //        void loadTextureFromFile(std::string file);
         void addSpriteForDirection(const Sprite& sprite, TileOrientation direction);
 
-        void update();
+        void update(CallbackType callback);
         void render(int x, int y);
 
         void walk(TileOrientation direction);
