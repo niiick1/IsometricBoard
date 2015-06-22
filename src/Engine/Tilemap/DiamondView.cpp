@@ -77,7 +77,7 @@ TilePosition DiamondView::screenToTilePosition(int x, int y, int offsetX, int of
 	int baseY = y - base;
 
 	base = (offsetX - (getTilemapRows() * width)) / 2;
-	int baseX = x - base;
+	int baseX = x - base + 48;
 
 	int w = width / 2;
 	int h = height / 2;
@@ -88,6 +88,6 @@ TilePosition DiamondView::screenToTilePosition(int x, int y, int offsetX, int of
 	TilePosition tp;
 	tp.x = posX;
 	tp.y = posY;
-	
+
 	return tp;
 }
