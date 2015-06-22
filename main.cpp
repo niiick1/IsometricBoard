@@ -18,6 +18,8 @@ const int TILE_WIDTH = 64;
 const int TILE_HEIGHT = TILE_WIDTH / 2;
 const int TILE_ROWS = 13;
 const int TILE_COLS = 12;
+const int MAP_WIDTH = 800;
+const int MAP_HEIGHT = 600;
 
 TileMap tm(TILE_ROWS, TILE_COLS);
 DiamondView dv(tm, TILE_WIDTH, TILE_HEIGHT);
@@ -286,142 +288,128 @@ void render(void) {
     glFlush();
 }
 
+bool detectCollision(TilePosition pos) {
+
+	if (pos.x == cursor.x && pos.y == cursor.y) {
+		//out of bounds
+		return true;
+	}
+
+	Tile tile = set.getTileById(tm.getTileId(pos.x, pos.y));
+
+	if (tile.getTextureId() == 1) {
+		//block collision
+		return true;
+	}
+	
+	return false;
+}
+
+void walk(enum TileOrientation orientation) {
+
+	if (m.getTime() != 0) {
+		return;
+	}
+
+	dv.calcTilePosition(cursor.x, cursor.y);
+
+	dv.tileWalking(orientation);
+	m.walk(orientation);
+
+	TilePosition pos;
+	pos.x = dv.getX();
+	pos.y = dv.getY();
+
+	if (detectCollision(pos)) {
+		return;
+	}
+
+	m.setCurrentPosition(pos);
+	m.setTime(0.00001f);
+
+	cursor.x = dv.getX();
+	cursor.y = dv.getY();
+
+}
+
 void handleKeyboard(unsigned char key, int x, int y) {
-    if (m.getTime() != 0) {
-        return;
-    }
 
-    dv.calcTilePosition(cursor.x, cursor.y);
-
-    switch (key) {
-        case 'w':
-        case 'W':
-            dv.tileWalking(NORTH);
-            m.walk(NORTH);
-//            glTranslatef(0, -1* TILE_HEIGHT, 0);
-            break;
-        case 'a':
+    switch (toupper(key)) {        
+        case 'W':	
+			walk(NORTH);
+            break;        
         case 'A':
-            dv.tileWalking(WEST);
-            m.walk(WEST);
-//            glTranslatef(TILE_WIDTH, 0, 0);
-            break;
-        case 's':
+			walk(WEST);
+            break;        
         case 'S':
-            dv.tileWalking(SOUTH);
-            m.walk(SOUTH);
-//            glTranslatef(0, TILE_HEIGHT, 0);
-            break;
-        case 'd':
+            walk(SOUTH);            
+            break;        
         case 'D':
-            dv.tileWalking(EAST);
-            m.walk(EAST);
-//            glTranslatef(-1 * TILE_WIDTH, 0, 0);
+            walk(EAST);            
             break;
-        case 'q':
         case 'Q':
-            dv.tileWalking(NORTHWEST);
-            m.walk(NORTHWEST);
-            break;
-        case 'e':
+            walk(NORTHWEST);            
+            break;        
         case 'E':
-            dv.tileWalking(NORTHEAST);
-            m.walk(NORTHEAST);
+            walk(NORTHEAST);            
             break;
-        case 'z':
         case 'Z':
-            dv.tileWalking(SOUTHWEST);
-            m.walk(SOUTHWEST);
+            walk(SOUTHWEST);
             break;
-        case 'c':
         case 'C':
-            dv.tileWalking(SOUTHEAST);
-            m.walk(SOUTHEAST);
+            walk(SOUTHEAST);
             break;
         default:
             return;
     }
-
-    TilePosition pos;
-    pos.x = dv.getX();
-    pos.y = dv.getY();
-
-    if (pos.x == cursor.x && pos.y == cursor.y) {
-        //out of bounds
-        return;
-    }
-
-    Tile tile = set.getTileById(tm.getTileId(pos.x, pos.y));
-
-    if (tile.getTextureId() == 1) {
-		//block collision
-        return;
-    }
-
-    m.setCurrentPosition(pos);
-    m.setTime(0.00001f);
-    
-    cursor.x = dv.getX();
-    cursor.y = dv.getY();
 }
 
 void handleMouse(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 
-        int base = (600 - (TILE_COLS * TILE_HEIGHT)) / 2;
-        int baseY = y - base;
+		TilePosition pos = dv.screenToTilePosition(x, y, MAP_WIDTH, MAP_HEIGHT);
 
-        base = (800 - (TILE_ROWS * TILE_WIDTH)) / 2;
-        int baseX = x - base;
+        cout << "Cursor at " << pos.x << "x" << pos.y << "\n";
 
-        int w = TILE_WIDTH / 2;
-        int h = TILE_HEIGHT / 2;
-
-        int posX = ((baseX * h) + (baseY * w) - ((TILE_COLS * w) + w) * h) / 1024;
-        int posY = ((baseX * -h) + (baseY * w) + ((TILE_COLS * w) + w) * h) / 1024;
-
-        cout << "Cursor at " << posX << "x" << posY << "\n";
-
-
-        int tileX = cursor.x - posX;
-        int tileY = cursor.y - posY;
+        int tileX = cursor.x - pos.x;
+        int tileY = cursor.y - pos.y;
 
         if (tileY < 0) {
             if (tileX < 0) {
-                cout << "1 - Move to SouthEast" << "\n";
-                handleKeyboard('Z', x, y);                
+                cout << "1 - Move to SouthWest" << "\n";                
+ 				walk(SOUTHWEST);
             }
             else if (tileX > 0) {
-                cout << "2- Move to NorthEast" << "\n";
-                handleKeyboard('Q', x, y);                
+                cout << "2- Move to NorthWest" << "\n";                
+				walk(NORTHWEST);
             }
             else {                
-                cout << "3 - Move to East" << "\n";
-                handleKeyboard('A', x, y);                
+                cout << "3 - Move to West" << "\n";
+				walk(WEST);
             }
         }
         else if (tileY > 0) {
             if (tileX < 0) {                                
-                cout << "4 - Move to NorthWest" << "\n";
-                handleKeyboard('E', x, y);                
+                cout << "4 - Move to NorthEast" << "\n";
+				walk(NORTHEAST);
             }
             else if (tileX > 0) {
-                cout << "5 - Move to NorthEast" << "\n";
-                handleKeyboard('Q', x, y);
+                cout << "5 - Move to NorthWest" << "\n";
+				walk(NORTHWEST);
             }
-            else {                
+            else {
                 cout << "6 - Move to North" << "\n";
-                handleKeyboard('W', x, y);
+				walk(NORTH);
             }
         }
         else {
             if (tileX < 0) {
-                cout << "7 - Move to SouthWest" << "\n";
-                handleKeyboard('C', x, y);
+                cout << "7 - Move to SouthEast" << "\n";
+				walk(SOUTHEAST);
             }
             else if (tileX > 0) {
-                cout << "8 - Move to NorthEast" << "\n";
-                handleKeyboard('Q', x, y);
+                cout << "8 - Move to NorthWest" << "\n";
+				walk(NORTHWEST);
             }
         }
 
@@ -438,10 +426,10 @@ int main(int argc, char* argv[])
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
-    glutInitWindowSize(800, 600);
+    glutInitWindowSize(MAP_WIDTH, MAP_HEIGHT);
 
-    int windowX = (glutGet(GLUT_SCREEN_WIDTH) - 800)/2,
-        windowY = (glutGet(GLUT_SCREEN_HEIGHT) - 600)/2;
+    int windowX = (glutGet(GLUT_SCREEN_WIDTH) - MAP_WIDTH)/2,
+        windowY = (glutGet(GLUT_SCREEN_HEIGHT) - MAP_HEIGHT)/2;
 
     glutInitWindowPosition(windowX, windowY);
     glutCreateWindow("Teste");

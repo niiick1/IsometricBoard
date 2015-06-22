@@ -12,6 +12,7 @@ class DiamondView : public TileMapView
         void tileWalking(TileOrientation);
         void mouseMap();
         TilePosition calcTilePosition(int x, int y);
+		TilePosition screenToTilePosition(int x, int y, int offsetX, int offsetY);
 
     protected:
     private:
