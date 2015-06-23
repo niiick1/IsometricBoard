@@ -11,6 +11,7 @@
 #include "Sprite.h"
 #include <iostream>
 #include <queue>
+#include "RGBAColor.h"
 
 using namespace std;
 
@@ -29,6 +30,8 @@ Tileset set;
 Model model;
 Model female;
 queue<TileOrientation> movementQueue;
+
+unsigned bgTexture;
 
 void loadModel() {
     Sprite sprite("resources/tiles/southwest.ptm", 8);
@@ -99,6 +102,24 @@ void resetModel() {
 
 }
 
+void drawBackground() {
+    glBindTexture(GL_TEXTURE_2D, bgTexture);
+
+    glBegin(GL_QUADS);
+    glTexCoord2i(0, 0);
+    glVertex2f(-400 + 48, -300 - 150);
+
+    glTexCoord2i(0, 1);
+    glVertex2f(-400 + 48, 300 - 150);
+
+    glTexCoord2i(1, 1);
+    glVertex2f(400 + 48, 300 - 150);
+
+    glTexCoord2i(1, 0);
+    glVertex2f(400 + 48, -300 - 150);
+    glEnd();
+}
+
 void init() {
     glClearColor(1, 1, 1, 0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -113,12 +134,17 @@ void init() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(-48, 150, 0);
-	glColor3f(0.0, 1.0, 0.5);
+    RGBAColor textcolor(10, 41, 1);
+	glColor3b(textcolor.getR(), textcolor.getG(), textcolor.getB());
 
     tm.loadTilemap("resources/map/map.txt");
 
     set.addTileFromFile("resources/tiles/brickwall.ptm");		 // 1
     set.addTileFromFile("resources/tiles/stonebricksmooth.ptm"); // 2
+    set.addTileFromFile("resources/bg/bg.ptm");
+
+    Tile t = set.getTileById(2);
+    bgTexture = t.getTextureId();
 //    set.addTileFromFile("resources/tiles/grass.ptm");			 // 3
 //    set.addTileFromFile("resources/tiles/ground.ptm");			 // 4
 
@@ -135,11 +161,10 @@ void init() {
 void render(void) {
     TilePosition tp;
 
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
-
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+    drawBackground();
 
     for (int x = 0; x < TILE_ROWS; x++) {
         for (int y = 0; y < TILE_COLS; y++) {
@@ -207,7 +232,6 @@ void render(void) {
 
 void victory() {
 	glRasterPos2i(200, 110);
-	glColor3f(0.0, 1.0, 0.5);
 	glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)"You WIN!!!");
 	glFlush();
 
@@ -380,7 +404,7 @@ int main(int argc, char* argv[])
         windowY = (glutGet(GLUT_SCREEN_HEIGHT) - MAP_HEIGHT)/2;
 
     glutInitWindowPosition(windowX, windowY);
-    glutCreateWindow("Teste");
+    glutCreateWindow("Isometric Board");
 
     init();
 
